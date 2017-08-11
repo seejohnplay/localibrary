@@ -11,36 +11,51 @@ class BooksApp extends React.Component {
 
   componentDidMount() {
     BooksAPI.getAll().then(books => {
-      this.setState({ books })
-      console.log(books)
+      this.setState({
+        books: books
+      })
     })
   }
 
-  filterBooksBy(shelf) {
-    return this.state.books.filter(book => book.shelf === shelf)
+  filterBooksBy(books, shelf) {
+    return books.filter(book => book.shelf === shelf)
+  }
+
+  updateBook = (book, shelf) => {
+    BooksAPI.update(book, shelf).then(() => {
+      book.shelf = shelf
+      this.setState(state => ({
+          books: state.books
+      }));
+    })
   }
 
   render() {
+    const { books } = this.state
+
     return (
       <div className="app">
         <Route exact path="/" render={() => (
           <div className="list-books">
             <div className="list-books-title">
-              <h1>MyReads</h1>
+              <h1>Localibrary</h1>
             </div>
             <div className="list-books-content">
               <div>
                 <Bookshelf
                   title="Currently Reading"
-                  books={this.filterBooksBy('currentlyReading')}
+                  books={this.filterBooksBy(books, "currentlyReading")}
+                  onUpdateBook={this.updateBook}
                 />
                 <Bookshelf
                   title="Want to Read"
-                  books={this.filterBooksBy('wantToRead')}
+                  books={this.filterBooksBy(books, "wantToRead")}
+                  onUpdateBook={this.updateBook}
                 />
                 <Bookshelf
                   title="Read"
-                  books={this.filterBooksBy('read')}
+                  books={this.filterBooksBy(books, "read")}
+                  onUpdateBook={this.updateBook}
                 />
               </div>
             </div>
