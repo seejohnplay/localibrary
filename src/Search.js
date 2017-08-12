@@ -20,23 +20,17 @@ class Search extends Component {
 
   bookSearch(query) {
     BooksAPI.search(query).then(response => {
-      if (response.error) {
-        this.setState({
-          searchResults: []
-        })
-      } else {
-        this.setState({
-          searchResults: this.parseResults(response)
-        })
-      }
+      this.setState({
+        searchResults: response.error ? [] : this.parseResults(response)
+      })
     })
   }
 
   parseResults(response) {
     const bookIds = this.props.books.map(book => book.id)
     return response.map(book => {
-      const index = bookIds.indexOf(book.id)
-      return index === -1 ? book : this.props.books[index]
+      const currentBook = this.props.books.find(b => b.id === book.id);
+      return currentBook ? currentBook : book;
     })
   }
 

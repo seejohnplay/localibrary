@@ -15,11 +15,7 @@ class BooksApp extends React.Component {
   }
 
   getAllBooks() {
-    BooksAPI.getAll().then(books => {
-      this.setState({
-        books: books
-      })
-    })
+    BooksAPI.getAll().then(books => this.setState({ books }))
   }
 
   filterBooksBy(books, shelf) {
@@ -29,7 +25,10 @@ class BooksApp extends React.Component {
   updateBook = (book, shelf) => {
     BooksAPI.update(book, shelf).then(() => {
       book.shelf = shelf
-      this.getAllBooks()
+      this.setState(state => {
+        const books = state.books
+        books: books.find(b => b.id === book.id) ? books : books.push(book)
+      })
     })
   }
 
